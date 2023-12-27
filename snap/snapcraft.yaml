@@ -1,21 +1,23 @@
-name: iot-example-graphical-snap  # you probably want to 'snapcraft register <name>'
+name: chromium-browser-snap  # you probably want to 'snapcraft register <name>'
 version: git # just for humans, typically '1.2+git' or '1.3.2'
-summary: IoT example using GLMark2 # 79 char long summary
-description: IoT example using GLMark2
+summary: Chromium Browser in snap for ubuntu-frame  # 79 char long summary
+description: Chromium Browser in snap for ubuntu-frame
 confinement: strict
-compression: lzo
 grade: stable
 base: core22
 
 apps:
-  iot-example-graphical-snap:
+  launch:
     command-chain: &_command-chain
       - bin/graphics-core22-wrapper
       - bin/wayland-launch
-    command: &_command usr/bin/glmark2-wayland --annotate --fullscreen --run-forever
+    command: &_command bin/chromium.launcher.ubuntuframe
     plugs: &_plugs
       - opengl
       - wayland
+      - browser-support
+      - network
+      - network-bind
 
   daemon:
     daemon: simple
@@ -50,16 +52,42 @@ layout:
     bind: $SNAP/graphics/libdrm
   /usr/share/drirc.d:
     symlink: $SNAP/graphics/drirc.d
-  # GLMark2
-  /usr/share/glmark2:
-    bind: $SNAP/usr/share/glmark2
+
+  # Chromium Browser
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /usr/share/sounds:
+    bind: $SNAP/usr/share/sounds
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+
 parts:
-  glmark2:
+  chromium-browser:
     plugin: nil
     stage-packages:
       - fonts-freefont-ttf
-      - glmark2-data
-      - glmark2-wayland
+      - libxcomposite1
+      - libxrandr2
+      - libasound2
+      - libatk1.0-0
+      - libatk-bridge2.0-0
+      - libatspi2.0-0
+      - libcairo2
+      - libcups2
+      - libfontconfig1
+      - libpango-1.0-0
+      - libxkbcommon0
+      - libsndfile1
+      - libpulse0
+      - libcanberra0
+      - libwebrtc-audio-processing1
+      - fonts-noto-cjk
+      - fonts-noto-cjk-extra
+
+    stage-snaps:
+      - chromium/latest/stable
 
   # Some utility scripts for setting up the Wayland environment
   setup:
@@ -77,7 +105,7 @@ parts:
 
   graphics-core22:
     after:
-      - glmark2
+      - chromium-browser
       - setup
     source: https://github.com/MirServer/graphics-core22.git
     plugin: dump
@@ -93,5 +121,3 @@ parts:
 
 architectures:
   - build-on: amd64
-  - build-on: armhf
-  - build-on: arm64

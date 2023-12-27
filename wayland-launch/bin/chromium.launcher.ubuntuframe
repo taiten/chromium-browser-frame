@@ -1,0 +1,40 @@
+#! /bin/sh
+
+set -e
+
+# get the IP from setting
+URL="$(snapctl get url)"
+
+rm -rf $SNAP_USER_DATA/.config/chromium/Singleton* || true
+
+start_chromium () {
+#$SNAP/usr/bin/setpriv --clear-groups --reuid snap_daemon \
+#  --regid snap_daemon -- $SNAP/usr/lib/chromium-browser/chrome \
+$SNAP/usr/lib/chromium-browser/chrome \
+	--no-sandbox \
+        --no-default-browser-check \
+        --no-first-run \
+        --noerrdialogs \
+        --disable-restore-session-state \
+        --disable-java \
+        --disable-translate \
+        --disable-suggestions-service \
+        --autoplay-policy=no-user-gesture-required \
+        --dbus-stub \
+        --enable-logging=stderr \
+        --ignore-gpu-blacklist \
+        --enable-native-gpu-memory-buffers \
+	--ozone-platform=wayland \
+        --enable-features=UseOzonePlatform \
+	--disable-dev-shm-usage \
+	--test-type \
+        $1
+}
+
+TEMP_PROFILE=$(mktemp -d)
+trap "rm -rf $TEMP_PROFILE" EXIT
+
+# first spawning a headles window helps against breaking out of kiosk mode
+# and suppresses any non-disabled startup dialogs
+start_chromium --no-startup-window
+start_chromium --user-data-dir=$TEMP_PROFILE
