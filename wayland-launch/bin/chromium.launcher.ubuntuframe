@@ -8,8 +8,6 @@ URL="$(snapctl get url)"
 rm -rf $SNAP_USER_DATA/.config/chromium/Singleton* || true
 
 start_chromium () {
-#$SNAP/usr/bin/setpriv --clear-groups --reuid snap_daemon \
-#  --regid snap_daemon -- $SNAP/usr/lib/chromium-browser/chrome \
 $SNAP/usr/lib/chromium-browser/chrome \
 	--no-sandbox \
         --no-default-browser-check \
@@ -37,4 +35,4 @@ trap "rm -rf $TEMP_PROFILE" EXIT
 # first spawning a headles window helps against breaking out of kiosk mode
 # and suppresses any non-disabled startup dialogs
 start_chromium --no-startup-window
-start_chromium --user-data-dir=$TEMP_PROFILE
+start_chromium --user-data-dir=$TEMP_PROFILE $URL
