@@ -18,6 +18,7 @@ apps:
       - browser-support
       - network
       - network-bind
+      - alsa
 
   daemon:
     daemon: simple
@@ -60,6 +61,8 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/sounds:
     bind: $SNAP/usr/share/sounds
+  /usr/share/alsa:
+    bind: $SNAP/usr/share/alsa
   /etc/fonts:
     bind: $SNAP/etc/fonts
 
