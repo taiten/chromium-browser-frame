@@ -95,6 +95,11 @@ parts:
     stage-snaps:
       - chromium/latest/stable
 
+    stage:
+      - -usr/bin/xdg-email
+      - -usr/lib/chromium-browser/chrome-sandbox
+
+
   # Some utility scripts for setting up the Wayland environment
   setup:
     plugin: dump
